@@ -1,0 +1,5 @@
+Prevent from giving input before characters showing (Flush)
+Use ncurses (maybe)
+Optimize
+Read input from any button
+Read input from mouse
