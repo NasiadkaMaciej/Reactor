@@ -7,6 +7,7 @@ int main(int argv, char *argc[])
 	srand(time(NULL));
 	typedef std::chrono::high_resolution_clock Clock;
 
+	// Set default or user provided number of tests
 	int repetitions = 0;
 	if (argv == 1)
 		repetitions = 5;
@@ -14,10 +15,7 @@ int main(int argv, char *argc[])
 	{
 		repetitions = atoi(argc[1]);
 		if (!strcmp(argc[1], "-h") || !strcmp(argc[1], "--help"))
-		{
 			printf("Usage: reactor {Attempts}\n");
-			exit(EXIT_SUCCESS);
-		}
 	}
 
 	unsigned long long *timeIntervals = new unsigned long long[repetitions];
@@ -31,17 +29,17 @@ int main(int argv, char *argc[])
 		printf("\033[2J\033[1;1H");
 	};
 
-	auto test = [&](int i)
+	for (int i = 0; i < repetitions; i++)
 	{
-		timeIntervals[i] = (rand() % (4000000000 - 2000000000 + 1)) + 4000000000;
+		timeIntervals[i] = (rand() % (5000000000 - 2000000000 + 1)) + 5000000000;
 		int time = 0;
 		int64_t reaction = 0;
 
 		while (true)
 		{
+			auto a = Clock::now();
 			if (timeIntervals[i] >= time)
 			{
-				auto a = Clock::now();
 				printf("\033[2J\033[1;1H");
 				std::this_thread::sleep_for(std::chrono::nanoseconds(10000));
 				auto b = Clock::now();
@@ -49,22 +47,16 @@ int main(int argv, char *argc[])
 			}
 			else
 			{
-				auto a = Clock::now();
 				printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-				std::this_thread::sleep_for(std::chrono::nanoseconds(10000));
+
 				getchar();
 				auto b = Clock::now();
 				userAttempts[i] = std::chrono::duration_cast<std::chrono::nanoseconds>(b - a).count();
 				break;
 			}
 		}
-	};
-
-	for (int i = 0; i < repetitions; i++)
-	{
-		std::thread worker(test, i);
-		worker.join();
 	}
+
 	std::cout << "\033[2J\033[1;1H";
 
 	double *average = new double[repetitions];
