@@ -18,7 +18,6 @@ int main(int argv, char *argc[])
 			printf("Usage: reactor {Attempts}\n");
 	}
 
-	unsigned long long *timeIntervals = new unsigned long long[repetitions];
 	unsigned long *userAttempts = new unsigned long[repetitions];
 
 	for (int i = 5; i > 0; i--)
@@ -31,14 +30,13 @@ int main(int argv, char *argc[])
 
 	for (int i = 0; i < repetitions; i++)
 	{
-		timeIntervals[i] = (rand() % (5000000000 - 2000000000 + 1)) + 5000000000;
+		unsigned long long timeInterval = (rand() % (5000000000 - 2000000000 + 1)) + 5000000000;
 		int time = 0;
 		int64_t reaction = 0;
-
 		while (true)
 		{
 			auto a = Clock::now();
-			if (timeIntervals[i] >= time)
+			if (timeInterval >= time)
 			{
 				printf("\033[2J\033[1;1H");
 				std::this_thread::sleep_for(std::chrono::nanoseconds(10000));
@@ -48,7 +46,7 @@ int main(int argv, char *argc[])
 			else
 			{
 				printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
+				auto a = Clock::now();
 				getchar();
 				auto b = Clock::now();
 				userAttempts[i] = std::chrono::duration_cast<std::chrono::nanoseconds>(b - a).count();
@@ -60,16 +58,18 @@ int main(int argv, char *argc[])
 	std::cout << "\033[2J\033[1;1H";
 
 	double *average = new double[repetitions];
-	double avg = 0;
+	double sum = 0;
 
 	for (int i = 0; i < repetitions; i++)
 	{
 		double ms = userAttempts[i] / 1000000.;
-		std::cout << i + 1 << ". " << ms << "ms\n";
+		printf("%i. %fms\n", i + 1, ms);
 		average[i] = ms;
 	}
 	for (int i = 0; i < repetitions; i++)
-		avg += average[i];
-	avg = avg / repetitions;
-	std::cout << "Avg: " << avg << "ms\n";
+		sum += average[i];
+	printf("Avg: %fms\n", sum / repetitions);
+
+	delete[] userAttempts;
+	delete[] average;
 }
