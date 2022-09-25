@@ -1,6 +1,12 @@
 #include <bits/stdc++.h>
 #include <chrono>
 #include <thread>
+#include <limits>
+// for <streamsize>
+#include <ios>
+
+// for numeric_limits
+#include <limits>
 
 int main(int argv, char *argc[])
 {
@@ -15,7 +21,10 @@ int main(int argv, char *argc[])
 	{
 		repetitions = atoi(argc[1]);
 		if (!strcmp(argc[1], "-h") || !strcmp(argc[1], "--help"))
+		{
 			printf("Usage: reactor {Attempts}\n");
+			return 0;
+		}
 	}
 
 	unsigned long *userAttempts = new unsigned long[repetitions];
@@ -38,10 +47,10 @@ int main(int argv, char *argc[])
 			auto a = Clock::now();
 			if (timeInterval >= time)
 			{
-				printf("\033[2J\033[1;1H");
 				std::this_thread::sleep_for(std::chrono::nanoseconds(10000));
 				auto b = Clock::now();
 				time += std::chrono::duration_cast<std::chrono::nanoseconds>(b - a).count();
+				printf("\033[2J\033[1;1H");
 			}
 			else
 			{
@@ -50,6 +59,7 @@ int main(int argv, char *argc[])
 				getchar();
 				auto b = Clock::now();
 				userAttempts[i] = std::chrono::duration_cast<std::chrono::nanoseconds>(b - a).count();
+				printf("\033[2J\033[1;1H");
 				break;
 			}
 		}
